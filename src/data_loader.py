@@ -27,3 +27,4 @@ def load_data(file_path='input/Cit-HepPh.txt'):
         print(f"文件{file_path}未找到，请确保文件路径正确。")
     except Exception as e:
         print(f"加载数据集时出错误：{e}")
+    return G

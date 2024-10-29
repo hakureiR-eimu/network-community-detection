@@ -6,3 +6,4 @@ def print_communities(communities):
     """
     for i, community in enumerate(communities, 1):
         print(f"社区{i}:{community}")
+
