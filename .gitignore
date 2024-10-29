@@ -41,3 +41,7 @@ htmlcov/
 .tox/
 .coverage
 coverage.xml
+
+# 数据集
+Cit-HepPh.txt
+soc-LiveJournal1.txt
