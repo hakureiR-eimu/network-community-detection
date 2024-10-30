@@ -1,10 +1,34 @@
 # community_detection.py
+from collections import defaultdict
 
 import networkx as nx
+import community as community_louvain
 from logger_config import logger
 
 
-def detect_communities(G, iteration=10):
+def log_communities(partition):
+    """
+    检测社区的数量并记录每个社区的节点数量。
+
+    参数:
+    - partition (dict): 节点到社区的映射，格式 {节点: 社区编号}.
+    """
+    # 统计每个社区中的节点
+    community_nodes = defaultdict(list)
+    for node, community in partition.items():
+        community_nodes[community].append(node)
+
+    # 计算社区数量
+    num_communities = len(community_nodes)
+    logger.info(f"Total number of communities: {num_communities}")
+    print(f"Total number of communities: {num_communities}")
+
+    # 记录每个社区的节点数量
+    for community, nodes in community_nodes.items():
+        community_size = len(nodes)
+        logger.info(f"Community {community} has {community_size} nodes")
+        print(f"Community {community} has {community_size} nodes")
+def detect_communities(G, iteration=1):
     """
     使用Girvan-Newman算法检测社区。
 
@@ -26,24 +50,9 @@ def detect_communities(G, iteration=10):
     logger.info(f"初始检测到的社区数: {len(initial_communities)}")
 
     # 使用Girvan-Newman算法
-    comp = nx.community.girvan_newman(G)
-
-    # 迭代获取社区
-    for i in range(iteration):
-        logger.info(f"第 {i + 1} 次迭代开始...")
-
-        # 获取当前的社区划分
-        communities = next(comp)
-
-        logger.info(f"第 {i + 1} 次迭代检测到的社区数: {len(communities)}")
-
-        # 如果社区数目增加，则记录
-        if len(communities) > len(initial_communities):
-            initial_communities = communities
-            logger.info(f"社区数目增加到: {len(initial_communities)}")
-        else:
-            logger.info("社区数目没有增加，停止迭代。")
-            break
+    partition = community_louvain.best_partition(G)
 
     logger.info("社区检测完成。")
-    return initial_communities
+    log_communities(partition)
+
+    return partition
